@@ -6,7 +6,16 @@ export const fetchPosts = () => async (dispatch) => {
 
         dispatch({ type: 'FETCH_POSTS', payload: response.data })
     } catch (e) {
-        console.log('error while making api request')
+        console.log('Error while making api request')
     }
-    
+}
+
+export const fetchUser = (id) => async (dispatch) => {
+    try {
+        const response = await jsonPlaceholder.get(`./users/${id}`);
+
+        dispatch({ type: 'FETCH_USER', payload: response.data })
+    } catch (e) {
+        console.log('Error while fetching data for user')
+    }
 }
