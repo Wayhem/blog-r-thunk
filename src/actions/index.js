@@ -1,6 +1,14 @@
 import jsonPlaceholder from '../apis/jsonPlaceholder';
 import _ from 'lodash';
 
+export const fetchPostsAndUsers = () => async (dispatch, getState) => {
+    await dispatch(fetchPosts());
+    
+    const Ids = _.uniq(_.map(getState().posts, 'userId'));
+    
+    Ids.forEach(id => dispatch(fetchUser(id)));
+};
+
 export const fetchPosts = () => async (dispatch) => {
     try {
         const response = await jsonPlaceholder.get('/posts');
@@ -11,9 +19,19 @@ export const fetchPosts = () => async (dispatch) => {
     }
 }
 
-export const fetchUser = (id) => (dispatch) => {
-    _fetchUser(id, dispatch);
+export const fetchUser = id => async dispatch => {
+    try {
+        const response = await jsonPlaceholder.get(`/users/${id}`);
+
+        dispatch({ type: 'FETCH_USER', payload: response.data })
+    } catch (e) {
+        console.log('Error while fetching data for user')
+    }
 }
+
+
+//ES6 memoized
+/*export const fetchUser = (id) => (dispatch) => _fetchUser(id, dispatch);
 
 const _fetchUser = _.memoize(async (id, dispatch) => {
     try {
@@ -23,7 +41,7 @@ const _fetchUser = _.memoize(async (id, dispatch) => {
     } catch (e) {
         console.log('Error while fetching data for user')
     }
-}); 
+}); */
 
 //ES5 version besides Async await
 /*export var fetchUser = function(id) {
